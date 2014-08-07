@@ -27,7 +27,14 @@ if (list) {
     var li = makeButton(list, bug);
     var a = li.querySelector('a');
     a.addEventListener("click", function(event) {
-      send(bug, document.location.toString());
+
+      // we need to sanitize the URL as tabs in the PR page
+      // have diff URL and it fail on bugzilla redirect.
+      var url = document.location.toString();
+      var s = url.match(/(.*\/pull\/[0-9]*)(\/.*)?$/);
+
+      // in case we failed to match, go ahead and submit URL.
+      send(bug, s && s[1] ? s[1] : url);
       event.stopPropagation();
       event.preventDefault();
     });
